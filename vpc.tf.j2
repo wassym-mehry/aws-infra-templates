@@ -1,0 +1,14 @@
+{% if vpc %}
+resource "aws_vpc" "{{ vpc.name }}" {
+  cidr_block = "{{ vpc.cidr_block }}"
+  enable_dns_support = true
+  enable_dns_hostnames = true
+  {% if vpc.tags %}
+  tags = {
+    {% for key, value in vpc.tags %}
+    {{ key }} = "{{ value }}"
+    {% endfor %}
+  }
+  {% endif %}
+}
+{% endif %}
