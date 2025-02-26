@@ -1,0 +1,19 @@
+{% if bucket %}
+resource "aws_s3_bucket" "{{ bucket.bucket_name }}" {
+  bucket = "{{ bucket.bucket_name }}"
+  {% if bucket.force_destroy is defined %}force_destroy = {{ bucket.force_destroy }}{% endif %}
+  {% if bucket.acl is defined %}acl = "{{ bucket.acl }}"{% endif %}
+  {% if bucket.versioning_enabled %}
+  versioning {
+    enabled = true
+  }
+  {% endif %}
+  {% if bucket.tags %}
+  tags = {
+    {% for key, value in bucket.tags %}
+    {{ key }} = "{{ value }}"
+    {% endfor %}
+  }
+  {% endif %}
+}
+{% endif %}
