@@ -1,0 +1,34 @@
+{% if ec2 %}
+{% for instance in ec2 %}
+resource "aws_instance" "{{ vpcName }}_ec2_{{ loop.index0 }}" {
+  ami = "{{ instance.ami }}"
+  instance_type = "{{ instance.instance_type }}"
+  subnet_id = aws_subnet.{{ instance.subnet_id }}.id
+  {% if instance.security_group_ids %}
+  vpc_security_group_ids = [
+    {% for sg_id in instance.security_group_ids %}
+    "{{ sg_id }}"
+    {% endfor %}
+  ]
+  {% endif %}
+  {% if instance.iam_instance_profile %}
+  iam_instance_profile = "{{ instance.iam_instance_profile }}"
+  {% endif %}
+  {% if instance.key_name %}
+  key_name = "{{ instance.key_name }}"
+  {% endif %}
+  {% if instance.ebs_block_devices %}
+  ebs_block_device {
+    {% for device in instance.ebs_block_devices %}
+    device_name = "{{ device.device_name }}"
+    volume_size = {{ device.volume_size }}
+    volume_type = "{{ device.volume_type }}"
+    {% endfor %}
+  }
+  {% endif %}
+  tags = {
+    Name = "{{ vpcName }}-ec2-{{ loop.index0 }}"
+  }
+}
+{% endfor %}
+{% endif %}
