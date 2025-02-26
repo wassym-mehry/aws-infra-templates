@@ -1,0 +1,8 @@
+{% if bucket.policy %}
+resource "aws_s3_bucket_policy" "{{ bucket.bucket_name }}_policy" {
+  bucket = "{{ bucket.bucket_name }}"
+  policy = <<POLICY
+  {{ bucket.policy }}
+  POLICY
+}
+{% endif %}
